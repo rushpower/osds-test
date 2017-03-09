@@ -113,12 +113,6 @@ func blockMount(mountDir, device, fsType string) error {
 }
 
 func fsMount(mountDir, device, fsType string) error {
-	var res unix.Stat_t
-	if err := unix.Stat(device, &res); err != nil {
-		log.Println("Could not stat", device, ":", err.Error())
-		return err
-	}
-
 	if isMounted(mountDir) {
 		err := errors.New("This path has been mounted!")
 		return err
