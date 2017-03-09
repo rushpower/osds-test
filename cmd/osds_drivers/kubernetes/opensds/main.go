@@ -26,15 +26,17 @@ import (
 )
 
 const (
-	URL_PREFIX    string = "http://127.0.0.1:8080"
-	LINK_PREFIX   string = "/dev/cinder-volumes/volume-"
-	MAPPER_PREFIX string = "/dev/mapper/cinder--volumes-volume--"
-	DEVICE_PREFIX string = "/dev/"
+	URL_PREFIX string = "http://10.2.1.233:8080"
+	// LINK_PREFIX   string = "/dev/cinder-volumes/volume-"
+	CINDER_LINK_PREFIX string = "/dev/mapper/cinder--volumes-volume--"
+	MANILA_LINK_PREFIX string = "/var/lib/manila/mnt/share-"
+	DEVICE_PREFIX      string = "/dev/"
 )
 
 type OpenSDSOptions struct {
 	DefaultOptions
-	VolumeId string `json:"volumeId"`
+	VolumeId     string `json:"volumeId"`
+	ResourceType string `json:"resourceType"`
 }
 
 type OpenSDSPlugin struct{}
@@ -51,10 +53,22 @@ func (OpenSDSPlugin) NewOptions() interface{} {
 func (OpenSDSPlugin) Attach(opts interface{}) Result {
 	opt := opts.(*OpenSDSOptions)
 
+	switch opt.ResourceType {
+	case "cinder":
+		return cinderAttach(opt)
+	case "manila":
+		return manilaAttach(opt)
+	default:
+		err := errors.New("Backend resource not supported!")
+		return Fail(err.Error())
+	}
+}
+
+func cinderAttach(opt *OpenSDSOptions) Result {
 	volId := opt.VolumeId
 	url := URL_PREFIX + "/api/v1/volumes/action/cinder/" + volId
 
-	linkPath := LINK_PREFIX + volId
+	linkPath := CINDER_LINK_PREFIX + strings.Replace(volId, "-", "--", 4)
 	path, err := generateDevicePath(linkPath)
 	if err != nil {
 		return Fail(err.Error())
@@ -94,13 +108,49 @@ func (OpenSDSPlugin) Attach(opts interface{}) Result {
 	}
 }
 
-func (OpenSDSPlugin) Detach(device string) Result {
-	if !strings.HasPrefix(device, MAPPER_PREFIX) {
-		err := errors.New("Expect device prefix: " + MAPPER_PREFIX)
+func manilaAttach(opt *OpenSDSOptions) Result {
+	shrId := opt.VolumeId
+	url := URL_PREFIX + "/api/v1/shares/action/manila/" + shrId
+
+	req := httplib.Get(url).SetTimeout(100*time.Second, 50*time.Second)
+
+	resp, err := req.Response()
+	if err != nil {
 		return Fail(err.Error())
 	}
 
-	volumeId := device[len(MAPPER_PREFIX):len(device)]
+	rbody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return Fail(err.Error())
+	}
+	sdr := new(ShareDetailResponse)
+	err = json.Unmarshal(rbody, sdr)
+	if err != nil {
+		return Fail(err.Error())
+	}
+
+	if sdr.ExportLocation == "" {
+		err = errors.New("Share not exported!")
+		return Fail(err.Error())
+	} else {
+		return Result{
+			Status: "Success",
+			Device: sdr.ExportLocation,
+		}
+	}
+}
+
+func (OpenSDSPlugin) Detach(device string) Result {
+	if !strings.HasPrefix(device, CINDER_LINK_PREFIX) {
+		if strings.HasPrefix(device, MANILA_LINK_PREFIX) {
+			return Succeed()
+		} else {
+			err := errors.New("Expect device prefix: " + CINDER_LINK_PREFIX)
+			return Fail(err.Error())
+		}
+	}
+
+	volumeId := device[len(CINDER_LINK_PREFIX):len(device)]
 	volId := strings.Replace(volumeId, "--", "-", 4)
 
 	url := URL_PREFIX + "/api/v1/volumes/cinder/" + volId

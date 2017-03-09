@@ -66,6 +66,16 @@ func Mount(mountDir, device, fsType string) error {
 		return err
 	}
 
+	switch fsType {
+	case "nfs":
+		return fsMount(mountDir, device, fsType)
+	default:
+		return blockMount(mountDir, device, fsType)
+	}
+
+}
+
+func blockMount(mountDir, device, fsType string) error {
 	var res unix.Stat_t
 	if err := unix.Stat(device, &res); err != nil {
 		log.Println("Could not stat", device, ":", err.Error())
@@ -102,13 +112,39 @@ func Mount(mountDir, device, fsType string) error {
 	return nil
 }
 
+func fsMount(mountDir, device, fsType string) error {
+	var res unix.Stat_t
+	if err := unix.Stat(device, &res); err != nil {
+		log.Println("Could not stat", device, ":", err.Error())
+		return err
+	}
+
+	if isMounted(mountDir) {
+		err := errors.New("This path has been mounted!")
+		return err
+	}
+
+	if err := os.MkdirAll(mountDir, 0777); err != nil {
+		log.Println("Could not create directory:", err.Error())
+		return err
+	}
+
+	mountCmd := exec.Command("mount.nfs", device, mountDir)
+	if mountOut, err := mountCmd.CombinedOutput(); err != nil {
+		log.Println("Could not mount:", err.Error(), "Output:", string(mountOut))
+		return err
+	}
+
+	return nil
+}
+
 func Unmount(mountDir string) error {
 	if !isMounted(mountDir) {
 		err := errors.New("This path is not mounted!")
 		return err
 	}
 
-	umountCmd := exec.Command("umount", mountDir)
+	umountCmd := exec.Command("umount", "-l", mountDir)
 	if umountOut, err := umountCmd.CombinedOutput(); err != nil {
 		log.Println("Could not unmount:", err.Error(), "Output:", string(umountOut))
 		return err
