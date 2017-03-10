@@ -77,6 +77,7 @@ func Mount(mountDir, device, fsType string) error {
 
 func blockMount(mountDir, device, fsType string) error {
 	var res unix.Stat_t
+
 	if err := unix.Stat(device, &res); err != nil {
 		log.Println("Could not stat", device, ":", err.Error())
 		return err

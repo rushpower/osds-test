@@ -19,6 +19,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -26,8 +27,9 @@ import (
 )
 
 const (
-	URL_PREFIX string = "http://10.2.1.233:8080"
-	// LINK_PREFIX   string = "/dev/cinder-volumes/volume-"
+	URL_PREFIX         string = "http://10.2.1.233:8080"
+	CEPH_POOL_NAME     string = "volumes"
+	CEPH_LINK_PREFIX   string = "volumes/volume-"
 	CINDER_LINK_PREFIX string = "/dev/mapper/cinder--volumes-volume--"
 	MANILA_LINK_PREFIX string = "/var/lib/manila/mnt/share-"
 	DEVICE_PREFIX      string = "/dev/"
@@ -37,6 +39,7 @@ type OpenSDSOptions struct {
 	DefaultOptions
 	VolumeId     string `json:"volumeId"`
 	ResourceType string `json:"resourceType"`
+	VolumeType   string `json:"volumeType"`
 }
 
 type OpenSDSPlugin struct{}
@@ -66,12 +69,40 @@ func (OpenSDSPlugin) Attach(opts interface{}) Result {
 
 func cinderAttach(opt *OpenSDSOptions) Result {
 	volId := opt.VolumeId
+	volType := opt.VolumeType
 	url := URL_PREFIX + "/api/v1/volumes/action/cinder/" + volId
 
-	linkPath := CINDER_LINK_PREFIX + strings.Replace(volId, "-", "--", 4)
-	path, err := generateDevicePath(linkPath)
-	if err != nil {
-		return Fail(err.Error())
+	var path string
+	switch volType {
+	case "lvm":
+		linkPath := CINDER_LINK_PREFIX + strings.Replace(volId, "-", "--", 4)
+
+		device, err := generateDevicePath(linkPath)
+		if err != nil {
+			return Fail(err.Error())
+		}
+
+		path = string(device)
+	case "ceph":
+		imagesCmd := exec.Command("rbd", "showmapped")
+		images, err := imagesCmd.CombinedOutput()
+		if err != nil {
+			return Fail(err.Error())
+		}
+
+		if strings.Contains(string(images), volId) {
+			err := errors.New("This volume have been attached!")
+			return Fail(err.Error())
+		}
+
+		pathCmd := exec.Command("rbd", "map", CEPH_LINK_PREFIX+volId)
+		device, err := pathCmd.CombinedOutput()
+		if err != nil {
+			return Fail(err.Error())
+		}
+
+		devSlice := strings.Split(string(device), "\n")
+		path = devSlice[0]
 	}
 
 	// fmt.Println("Start POST request to attach volume, url =", url)
@@ -141,17 +172,34 @@ func manilaAttach(opt *OpenSDSOptions) Result {
 }
 
 func (OpenSDSPlugin) Detach(device string) Result {
-	if !strings.HasPrefix(device, CINDER_LINK_PREFIX) {
-		if strings.HasPrefix(device, MANILA_LINK_PREFIX) {
-			return Succeed()
+	if strings.HasPrefix(device, MANILA_LINK_PREFIX) {
+		return Succeed()
+	}
+
+	var volId string
+
+	if strings.HasPrefix(device, CINDER_LINK_PREFIX) {
+		volumeId := device[len(CINDER_LINK_PREFIX):len(device)]
+		volId = strings.Replace(volumeId, "--", "-", 4)
+	} else {
+		if strings.HasPrefix(device, "/dev/rbd") {
+			image, err := parseDevicePath(device)
+			if err != nil {
+				return Fail(err.Error())
+			}
+
+			volId = image[7:len(image)]
+
+			unmapCmd := exec.Command("rbd", "unmap", device)
+			_, err := unmapCmd.CombinedOutput()
+			if err != nil {
+				return Fail(err.Error())
+			}
 		} else {
-			err := errors.New("Expect device prefix: " + CINDER_LINK_PREFIX)
+			err := errors.New("Expect device prefix: " + CINDER_LINK_PREFIX + ", get " + device)
 			return Fail(err.Error())
 		}
 	}
-
-	volumeId := device[len(CINDER_LINK_PREFIX):len(device)]
-	volId := strings.Replace(volumeId, "--", "-", 4)
 
 	url := URL_PREFIX + "/api/v1/volumes/cinder/" + volId
 
@@ -300,4 +348,23 @@ func generateDevicePath(link string) (string, error) {
 	slice := strings.Split(path, "/")
 	device := "/dev/" + slice[1]
 	return device, nil
+}
+
+func parseDevicePath(device string) (string, error) {
+	linksCmd := exec.Command("rbd", "showmapped")
+	links, err := linksCmd.CombinedOutput()
+	if err != nil {
+		return "", err
+	}
+
+	linkSlice := strings.Split(string(links), "\n")
+	for _, i := range linkSlice {
+		if strings.Contains(i, device) {
+			imageSlice := strings.Fields(i)
+			return imageSlice[2], nil
+		}
+	}
+
+	err = errors.New("Can't parse device path!")
+	return "", err
 }

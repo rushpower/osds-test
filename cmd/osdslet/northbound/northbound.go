@@ -51,5 +51,5 @@ func Run() {
 		)
 
 	beego.AddNamespace(ns)
-	beego.Run("127.0.0.1")
+	beego.Run("10.2.1.233")
 }
