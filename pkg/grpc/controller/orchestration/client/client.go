@@ -37,15 +37,21 @@ import (
 	"log"
 
 	pb "github.com/opensds/opensds/pkg/grpc/opensds"
+	"github.com/opensds/opensds/pkg/grpc/util"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
 
 const (
-	address = "localhost:50049"
+	ORCHESTRATION_PORT = ":50049"
 )
 
 func CreateVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -67,6 +73,11 @@ func CreateVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func GetVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -88,6 +99,11 @@ func GetVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func ListVolumes(vr *pb.VolumeRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -109,6 +125,11 @@ func ListVolumes(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func DeleteVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -130,6 +151,11 @@ func DeleteVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func AttachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -151,6 +177,11 @@ func AttachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func DetachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -172,6 +203,11 @@ func DetachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func MountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -193,6 +229,11 @@ func MountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func UnmountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -214,6 +255,11 @@ func UnmountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func CreateShare(sr *pb.ShareRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -235,6 +281,11 @@ func CreateShare(sr *pb.ShareRequest) (*pb.Response, error) {
 }
 
 func GetShare(sr *pb.ShareRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -256,6 +307,11 @@ func GetShare(sr *pb.ShareRequest) (*pb.Response, error) {
 }
 
 func ListShares(sr *pb.ShareRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -277,6 +333,11 @@ func ListShares(sr *pb.ShareRequest) (*pb.Response, error) {
 }
 
 func DeleteShare(sr *pb.ShareRequest) (*pb.Response, error) {
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
 	// Set up a connection to the orchestration server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -295,4 +356,14 @@ func DeleteShare(sr *pb.ShareRequest) (*pb.Response, error) {
 	log.Println("Orchestration client receive delete share response, sr =", resp)
 
 	return resp, nil
+}
+
+func getDialAddress() (string, error) {
+	// Get Orchestration client host IP.
+	host, err := util.GetHostIP()
+	if err != nil {
+		return "", err
+	}
+
+	return host + ORCHESTRATION_PORT, nil
 }

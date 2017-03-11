@@ -48,7 +48,7 @@ func (plugin *CinderPlugin) Unset() {
 
 }
 
-func (plugin *CinderPlugin) CreateVolume(name string, size int32) (string, error) {
+func (plugin *CinderPlugin) CreateVolume(name, volType string, size int32) (string, error) {
 	//Get the certified volume service.
 	volumeService, err := plugin.getVolumeService()
 	if err != nil {
@@ -59,6 +59,7 @@ func (plugin *CinderPlugin) CreateVolume(name string, size int32) (string, error
 	//Configure HTTP request body, the body is defined in volume package.
 	requestBody := volume.RequestBody{}
 	requestBody.Name = name
+	requestBody.VolumeType = volType
 	requestBody.Size = size
 	body := volume.CreateBody{requestBody}
 	volume, err := volumeService.Create(&body)

@@ -37,16 +37,22 @@ import (
 	"log"
 
 	pb "github.com/opensds/opensds/pkg/grpc/opensds"
+	"github.com/opensds/opensds/pkg/grpc/util"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
 
 const (
-	address = "localhost:50050"
+	DOCK_PORT = ":50050"
 )
 
 func CreateVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -67,7 +73,12 @@ func CreateVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func GetVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -88,7 +99,12 @@ func GetVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func ListVolumes(vr *pb.VolumeRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -109,7 +125,12 @@ func ListVolumes(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func DeleteVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -130,7 +151,12 @@ func DeleteVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func AttachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -151,7 +177,12 @@ func AttachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func DetachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -172,7 +203,12 @@ func DetachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func MountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -193,7 +229,12 @@ func MountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func UnmountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -214,7 +255,12 @@ func UnmountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func CreateShare(sr *pb.ShareRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -235,7 +281,12 @@ func CreateShare(sr *pb.ShareRequest) (*pb.Response, error) {
 }
 
 func GetShare(sr *pb.ShareRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -256,7 +307,12 @@ func GetShare(sr *pb.ShareRequest) (*pb.Response, error) {
 }
 
 func ListShares(sr *pb.ShareRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -277,7 +333,12 @@ func ListShares(sr *pb.ShareRequest) (*pb.Response, error) {
 }
 
 func DeleteShare(sr *pb.ShareRequest) (*pb.Response, error) {
-	// Set up a connection to the orchestration server.
+	address, err := getDialAddress()
+	if err != nil {
+		return &pb.Response{}, err
+	}
+
+	// Set up a connection to the Dock server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("did not connect: %v\n", err)
@@ -295,4 +356,14 @@ func DeleteShare(sr *pb.ShareRequest) (*pb.Response, error) {
 	log.Println("Dock client receive delete share response, sr =", resp)
 
 	return resp, nil
+}
+
+func getDialAddress() (string, error) {
+	// Get Dock client host IP.
+	host, err := util.GetHostIP()
+	if err != nil {
+		return "", err
+	}
+
+	return host + DOCK_PORT, nil
 }

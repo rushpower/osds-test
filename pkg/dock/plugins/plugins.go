@@ -41,7 +41,7 @@ type VolumePlugin interface {
 	//Any operation the volume driver does while stoping.
 	Unset()
 
-	CreateVolume(name string, size int32) (string, error)
+	CreateVolume(name string, volType string, size int32) (string, error)
 
 	GetVolume(volID string) (string, error)
 

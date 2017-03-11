@@ -14,6 +14,10 @@ import (
 	apiclient "github.com/opensds/opensds/api/client"
 )
 
+const (
+	SERVER_ADDRESS = "127.0.0.1:8080"
+)
+
 func ContainsAll(secret interface{}) (bool, error) {
 	value := reflect.ValueOf(secret)
 	for i := 0; i < value.NumField(); i++ {
@@ -34,7 +38,7 @@ func ContainsAll(secret interface{}) (bool, error) {
 }
 
 func TestListVersions(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -50,7 +54,7 @@ func TestListVersions(t *testing.T) {
 }
 
 func TestGetVersionv1(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -66,15 +70,16 @@ func TestGetVersionv1(t *testing.T) {
 }
 
 func TestCreateVolume(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
 	cvp := operations.NewCreateVolumeParams()
 	cvp.ResourceType = "cinder"
 	cvp.VolumeRequest = &models.VolumeRequest{
-		Name: "newvol",
-		Size: 1,
+		Name:       "newvol",
+		VolumeType: "cinder",
+		Size:       1,
 	}
 
 	volume, err := client.Operations.CreateVolume(cvp)
@@ -89,7 +94,7 @@ func TestCreateVolume(t *testing.T) {
 }
 
 func TestGetVolume(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -109,7 +114,7 @@ func TestGetVolume(t *testing.T) {
 }
 
 func TestListVolumes(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -128,7 +133,7 @@ func TestListVolumes(t *testing.T) {
 }
 
 func TestDeleteVolume(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -148,7 +153,7 @@ func TestDeleteVolume(t *testing.T) {
 }
 
 func TestAttachVolume(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -173,7 +178,7 @@ func TestAttachVolume(t *testing.T) {
 }
 
 func TestDetachVolume(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -197,7 +202,7 @@ func TestDetachVolume(t *testing.T) {
 }
 
 func TestMountVolume(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -221,7 +226,7 @@ func TestMountVolume(t *testing.T) {
 }
 
 func TestUnmountVolume(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -243,7 +248,7 @@ func TestUnmountVolume(t *testing.T) {
 }
 
 func TestCreateShare(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -268,7 +273,7 @@ func TestCreateShare(t *testing.T) {
 }
 
 func TestGetShare(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -288,7 +293,7 @@ func TestGetShare(t *testing.T) {
 }
 
 func TestListShares(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 
@@ -307,7 +312,7 @@ func TestListShares(t *testing.T) {
 }
 
 func TestDeleteShare(t *testing.T) {
-	transport := httptransport.New("127.0.0.1:8080", "", nil)
+	transport := httptransport.New(SERVER_ADDRESS, "", nil)
 
 	client := apiclient.New(transport, strfmt.Default)
 

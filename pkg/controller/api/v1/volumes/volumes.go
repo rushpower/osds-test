@@ -53,6 +53,7 @@ type VolumeRequest struct {
 	ResourceType string `json:"resourcetType,omitempty"`
 	Id           string `json:"id,omitempty"`
 	Name         string `json:"name,omitempty"`
+	VolumeType   string `json:"volumeType"`
 	Size         int32  `json:"size"`
 	AllowDetails bool   `json:"allowDetails"`
 
@@ -65,7 +66,7 @@ type VolumeRequest struct {
 }
 
 func (vr VolumeRequest) createVolume() *pb.Response {
-	return grpcapi.CreateVolume(vr.ResourceType, vr.Name, vr.Size)
+	return grpcapi.CreateVolume(vr.ResourceType, vr.Name, vr.VolumeType, vr.Size)
 }
 
 func (vr VolumeRequest) getVolume() *pb.Response {

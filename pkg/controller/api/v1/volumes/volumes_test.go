@@ -271,6 +271,7 @@ func TestUnmountVolume(t *testing.T) {
 var sampleVolumeCreateRequest = `{
 	"resourceType":"cinder",
 	"name":"myvol1",
+	"volType":"lvm",
 	"size":2
 }`
 

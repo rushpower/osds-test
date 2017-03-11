@@ -24,18 +24,17 @@ import (
 	"log"
 	"os"
 
-	"github.com/opensds/opensds/cmd/osdslet/northbound"
-	"github.com/opensds/opensds/cmd/osdslet/util"
-	orchServer "github.com/opensds/opensds/pkg/grpc/controller/orchestration/server"
+	"github.com/opensds/opensds/cmd/osdsdock/util"
+	dockServer "github.com/opensds/opensds/pkg/grpc/dock/server"
 )
 
 const (
-	ORCHESTRATION_PORT = ":50049"
+	DOCK_PORT = ":50050"
 )
 
 func main() {
 	// Open OpenSDS log file
-	f, err := os.OpenFile("/var/log/opensds/osdslet.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile("/var/log/opensds/osdsdock.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		os.Exit(1)
@@ -51,12 +50,9 @@ func main() {
 		panic(err)
 	}
 
-	// Start OpenSDS northbound REST service.
-	go northbound.Run(host)
+	// Construct dock module grpc server struct and do some initialization.
+	ds := dockServer.NewDockServer(host + DOCK_PORT)
 
-	// Construct orchestration module grpc server struct and do some initialization.
-	os := orchServer.NewOrchServer(host + ORCHESTRATION_PORT)
-
-	// Start the listen mechanism of controller orchestration module.
-	os.ListenAndServe()
+	// Start the listen mechanism of dock module.
+	ds.ListenAndServe()
 }

@@ -24,7 +24,7 @@ import (
 	"github.com/astaxie/beego/context"
 )
 
-func Run() {
+func Run(host string) {
 	ns :=
 		beego.NewNamespace("/api",
 			beego.NSCond(func(ctx *context.Context) bool {
@@ -51,5 +51,5 @@ func Run() {
 		)
 
 	beego.AddNamespace(ns)
-	beego.Run("10.2.1.233")
+	beego.Run(host)
 }
