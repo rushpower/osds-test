@@ -30,6 +30,7 @@ import (
 )
 
 const (
+	NORTHBOUND_PORT    = ":50048"
 	ORCHESTRATION_PORT = ":50049"
 )
 
@@ -52,7 +53,7 @@ func main() {
 	}
 
 	// Start OpenSDS northbound REST service.
-	go northbound.Run(host)
+	go northbound.Run(host + NORTHBOUND_PORT)
 
 	// Construct orchestration module grpc server struct and do some initialization.
 	os := orchServer.NewOrchServer(host + ORCHESTRATION_PORT)
