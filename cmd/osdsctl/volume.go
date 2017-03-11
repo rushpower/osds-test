@@ -94,6 +94,7 @@ var falseAllVolumesDetailResponse api.VolumeDetailResponse
 var (
 	volResourceType string
 	volName         string
+	volType         string
 	volAllowDetails bool
 	host            string
 	attachDevice    string
@@ -114,10 +115,11 @@ func init() {
 	volumeCommand.AddCommand(volumeAttachCommand)
 	volumeCommand.AddCommand(volumeDetachCommand)
 	volumeCreateCommand.Flags().StringVarP(&volName, "name", "n", "null", "the name of created volume")
+	volumeCreateCommand.Flags().StringVarP(&volType, "type", "t", "", "the type of created volume")
 	volumeListCommand.Flags().BoolVarP(&volAllowDetails, "detail", "d", false, "list volumes in details")
 	volumeAttachCommand.Flags().StringVarP(&host, "host", "o", defaultHost, "the name of attaching host")
 	volumeAttachCommand.Flags().StringVarP(&attachDevice, "path", "p", "/mnt", "the path of attaching device")
-	volumeMountCommand.Flags().StringVarP(&fsType, "type", "t", "ext4", "the file system type")
+	volumeMountCommand.Flags().StringVarP(&fsType, "type", "t", "", "the file system type")
 }
 
 func volumeAction(cmd *cobra.Command, args []string) {
@@ -140,6 +142,7 @@ func volumeCreateAction(cmd *cobra.Command, args []string) {
 	volumeRequest := volumes.VolumeRequest{
 		ResourceType: volResourceType,
 		Name:         volName,
+		VolumeType:   volType,
 		Size:         int32(size),
 	}
 	result, err := volumes.CreateVolume(volumeRequest)

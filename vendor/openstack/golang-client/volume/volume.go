@@ -70,6 +70,7 @@ func NewService(
 
 type RequestBody struct {
 	Name         string `json:"name"`
+	VolumeType   string `json:"volume_type"`
 	Size         int32  `json:"size"`
 	HostName     string `json:"host_name"`
 	Mountpoint   string `json:"mountpoint"`

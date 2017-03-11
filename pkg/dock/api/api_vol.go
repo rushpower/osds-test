@@ -30,6 +30,7 @@ import (
 func CreateVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 	result, err := dock.CreateVolume(vr.GetResoureType(),
 		vr.GetName(),
+		vr.GetVolumeType(),
 		vr.GetSize())
 	if err != nil {
 		log.Println("Error occured in adapter module when create volume:", err)

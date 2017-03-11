@@ -26,12 +26,13 @@ import (
 	pb "github.com/opensds/opensds/pkg/grpc/opensds"
 )
 
-func CreateVolume(resourceType string, name string, size int32) *pb.Response {
+func CreateVolume(resourceType, name, volumeType string, size int32) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
 		ResoureType: resourceType,
 		Name:        name,
+		VolumeType:  volumeType,
 		Size:        size,
 	}
 

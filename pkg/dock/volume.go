@@ -35,7 +35,7 @@ type VolumeDriver interface {
 	//Any operation the volume driver does while stoping.
 	Unset()
 
-	CreateVolume(name string, size int32) (string, error)
+	CreateVolume(name string, volType string, size int32) (string, error)
 
 	GetVolume(volID string) (string, error)
 
@@ -48,7 +48,7 @@ type VolumeDriver interface {
 	DetachVolume(volID string, attachment string) (string, error)
 }
 
-func CreateVolume(resourceType string, name string, size int32) (string, error) {
+func CreateVolume(resourceType, name, volType string, size int32) (string, error) {
 	//Get the storage plugins and do some initializations.
 	plugins, err := storagePlugins.InitVP(resourceType)
 	if err != nil {
@@ -58,7 +58,7 @@ func CreateVolume(resourceType string, name string, size int32) (string, error) 
 
 	//Call function of StoragePlugins configured by storage plugins.
 	var volumeDriver VolumeDriver = plugins
-	result, err := volumeDriver.CreateVolume(name, size)
+	result, err := volumeDriver.CreateVolume(name, volType, size)
 	if err != nil {
 		log.Println("Call plugin to create volume failed:", err)
 		return "", err

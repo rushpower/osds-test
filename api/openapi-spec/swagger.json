@@ -584,6 +584,9 @@
 				"name": {
 					"type": "string"
 				},
+				"volumeType": {
+					"type": "string"
+				},
 				"size": {
 					"type": "integer",
 					"format": "int32"

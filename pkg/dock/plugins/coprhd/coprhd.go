@@ -96,7 +96,7 @@ func (d *Driver) Unset() {
 
 }
 
-func (d *Driver) CreateVolume(name string, size int32) (string, error) {
+func (d *Driver) CreateVolume(name, volType string, size int32) (string, error) {
 
 	s, err := d.getAuthSession()
 
