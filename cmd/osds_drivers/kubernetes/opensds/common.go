@@ -239,7 +239,7 @@ type DockNode struct {
 }
 
 func getDockNode() (*DockNode, error) {
-	var nodePtr *DockNode
+	var nodePtr = &DockNode{}
 
 	userJSON, err := ioutil.ReadFile("/etc/opensds/dock_node.json")
 	if err != nil {

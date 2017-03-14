@@ -93,21 +93,24 @@ func blockMount(mountDir, device, fsType string) error {
 		return err
 	}
 
-	mkfsCmd := exec.Command("mkfs", "-t", fsType, device)
-	if mkfsOut, err := mkfsCmd.CombinedOutput(); err != nil {
-		log.Println("Could not mkfs:", err.Error(), "Output:", string(mkfsOut))
-		return err
-	}
-
 	if err := os.MkdirAll(mountDir, 0777); err != nil {
 		log.Println("Could not create directory:", err.Error())
 		return err
 	}
 
 	mountCmd := exec.Command("mount", device, mountDir)
-	if mountOut, err := mountCmd.CombinedOutput(); err != nil {
-		log.Println("Could not mount:", err.Error(), "Output:", string(mountOut))
-		return err
+	if _, err := mountCmd.CombinedOutput(); err != nil {
+		mkfsCmd := exec.Command("mkfs", "-t", fsType, device)
+		if mkfsOut, err := mkfsCmd.CombinedOutput(); err != nil {
+			log.Println("Could not mkfs:", err.Error(), "Output:", string(mkfsOut))
+			return err
+		}
+
+		mountCmd := exec.Command("mount", device, mountDir)
+		if mountOut, err := mountCmd.CombinedOutput(); err != nil {
+			log.Println("Could not mount:", err.Error(), "Output:", string(mountOut))
+			return err
+		}
 	}
 
 	return nil

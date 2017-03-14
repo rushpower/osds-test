@@ -163,7 +163,7 @@ func manilaAttach(opt *OpenSDSOptions) Result {
 }
 
 func (OpenSDSPlugin) Detach(device string) Result {
-	if strings.HasPrefix(device, MANILA_LINK_PREFIX) {
+	if strings.Contains(device, MANILA_LINK_PREFIX) {
 		return Succeed()
 	}
 
