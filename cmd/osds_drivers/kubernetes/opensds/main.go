@@ -127,7 +127,7 @@ func cinderAttach(opt *OpenSDSOptions) Result {
 
 func manilaAttach(opt *OpenSDSOptions) Result {
 	shrId := opt.VolumeId
-	url := URL_PREFIX + "/api/v1/shares/action/manila/" + shrId
+	url := URL_PREFIX + "/api/v1/shares/manila/" + shrId
 
 	req := httplib.Get(url).SetTimeout(100*time.Second, 50*time.Second)
 
@@ -257,7 +257,6 @@ func (OpenSDSPlugin) Mount(mountDir string, device string, opts interface{}) Res
 	req := httplib.Post(url).SetTimeout(100*time.Second, 50*time.Second)
 
 	var volumeRequest VolumeRequest
-	volumeRequest.ResourceType = opt.ResourceType
 	volumeRequest.ActionType = "mount"
 	volumeRequest.MountDir = mountDir
 	volumeRequest.Device = device
