@@ -162,7 +162,6 @@ func PostVolumeAction(ctx *context.Context) {
 	ctx.Output.Header("Content-Type", "application/json")
 	ctx.Output.ContentType("application/json")
 
-	resourceType := ctx.Input.Param(":resource")
 	id := ctx.Input.Param(":id")
 	rbody, err := ioutil.ReadAll(ctx.Request.Body)
 	if err != nil {
@@ -172,7 +171,6 @@ func PostVolumeAction(ctx *context.Context) {
 	}
 
 	var volumeRequest volumes.VolumeRequest
-	volumeRequest.ResourceType = resourceType
 	volumeRequest.Id = id
 	if err = json.Unmarshal(rbody, &volumeRequest); err != nil {
 		log.Println("Parse volume request body failed:", err)

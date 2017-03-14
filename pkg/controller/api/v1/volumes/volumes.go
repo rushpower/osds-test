@@ -94,7 +94,7 @@ func (vr VolumeRequest) mountVolume() *pb.Response {
 }
 
 func (vr VolumeRequest) unmountVolume() *pb.Response {
-	return grpcapi.UnmountVolume(vr.MountDir)
+	return grpcapi.UnmountVolume(vr.ResourceType, vr.MountDir)
 }
 
 func CreateVolume(vrd VolumeRequestDeliver) (api.VolumeResponse, error) {

@@ -159,11 +159,12 @@ func MountVolume(resourceType, mountDir, device, fsType string) *pb.Response {
 	return resp
 }
 
-func UnmountVolume(mountDir string) *pb.Response {
+func UnmountVolume(resourceType, mountDir string) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
-		MountDir: mountDir,
+		ResoureType: resourceType,
+		MountDir:    mountDir,
 	}
 
 	resp, err := client.UnmountVolume(vr)

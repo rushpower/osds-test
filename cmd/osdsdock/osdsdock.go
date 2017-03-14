@@ -24,7 +24,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/opensds/opensds/cmd/osdsdock/util"
+	"github.com/opensds/opensds/cmd/utils"
 	dockServer "github.com/opensds/opensds/pkg/grpc/dock/server"
 )
 
@@ -45,7 +45,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// Get OpenSDS host IP.
-	host, err := util.GetHostIP()
+	host, err := utils.GetHostIP()
 	if err != nil {
 		panic(err)
 	}

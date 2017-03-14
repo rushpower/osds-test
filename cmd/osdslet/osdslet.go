@@ -25,7 +25,7 @@ import (
 	"os"
 
 	"github.com/opensds/opensds/cmd/osdslet/northbound"
-	"github.com/opensds/opensds/cmd/osdslet/util"
+	"github.com/opensds/opensds/cmd/utils"
 	orchServer "github.com/opensds/opensds/pkg/grpc/controller/orchestration/server"
 )
 
@@ -47,7 +47,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// Get OpenSDS host IP.
-	host, err := util.GetHostIP()
+	host, err := utils.GetHostIP()
 	if err != nil {
 		panic(err)
 	}

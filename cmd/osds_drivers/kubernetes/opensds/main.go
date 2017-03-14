@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/httplib"
+	"github.com/opensds/opensds/cmd/utils"
 )
 
 const (
@@ -256,6 +257,7 @@ func (OpenSDSPlugin) Mount(mountDir string, device string, opts interface{}) Res
 	req := httplib.Post(url).SetTimeout(100*time.Second, 50*time.Second)
 
 	var volumeRequest VolumeRequest
+	volumeRequest.ResourceType = opt.ResourceType
 	volumeRequest.ActionType = "mount"
 	volumeRequest.MountDir = mountDir
 	volumeRequest.Device = device
@@ -295,6 +297,18 @@ func (OpenSDSPlugin) Unmount(mountDir string) Result {
 	var volumeRequest VolumeRequest
 	volumeRequest.ActionType = "unmount"
 	volumeRequest.MountDir = mountDir
+
+	// Get OpenSDS host IP.
+	host, err := utils.GetHostIP()
+	if err != nil {
+		return Fail(err.Error())
+	}
+
+	if host == "10.2.1.234" {
+		volumeRequest.ResourceType = "manila"
+	} else {
+		volumeRequest.ResourceType = "cinder"
+	}
 
 	req.JSONBody(volumeRequest)
 	resp, err := req.Response()
