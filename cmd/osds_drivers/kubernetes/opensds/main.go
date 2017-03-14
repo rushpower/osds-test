@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	URL_PREFIX         string = "http://10.2.1.233:8080"
+	URL_PREFIX         string = "http://10.2.0.115:50048"
 	CEPH_POOL_NAME     string = "volumes"
 	CEPH_LINK_PREFIX   string = "volumes/volume-"
 	CINDER_LINK_PREFIX string = "/dev/mapper/cinder--volumes-volume--"
@@ -75,34 +75,19 @@ func cinderAttach(opt *OpenSDSOptions) Result {
 	var path string
 	switch volType {
 	case "lvm":
-		linkPath := CINDER_LINK_PREFIX + strings.Replace(volId, "-", "--", 4)
-
-		device, err := generateDevicePath(linkPath)
+		device, err := getLvmDevicePath(volId)
 		if err != nil {
 			return Fail(err.Error())
 		}
 
 		path = string(device)
 	case "ceph":
-		imagesCmd := exec.Command("rbd", "showmapped")
-		images, err := imagesCmd.CombinedOutput()
+		device, err := getCephDevicePath(volId)
 		if err != nil {
 			return Fail(err.Error())
 		}
 
-		if strings.Contains(string(images), volId) {
-			err := errors.New("This volume have been attached!")
-			return Fail(err.Error())
-		}
-
-		pathCmd := exec.Command("rbd", "map", CEPH_LINK_PREFIX+volId)
-		device, err := pathCmd.CombinedOutput()
-		if err != nil {
-			return Fail(err.Error())
-		}
-
-		devSlice := strings.Split(string(device), "\n")
-		path = devSlice[0]
+		path = device
 	}
 
 	// fmt.Println("Start POST request to attach volume, url =", url)
@@ -191,12 +176,12 @@ func (OpenSDSPlugin) Detach(device string) Result {
 			volId = image[7:len(image)]
 
 			unmapCmd := exec.Command("rbd", "unmap", device)
-			_, err := unmapCmd.CombinedOutput()
+			_, err = unmapCmd.CombinedOutput()
 			if err != nil {
 				return Fail(err.Error())
 			}
 		} else {
-			err := errors.New("Expect device prefix: " + CINDER_LINK_PREFIX + ", get " + device)
+			err := errors.New("Unexpect device prefix: " + device)
 			return Fail(err.Error())
 		}
 	}
@@ -338,7 +323,9 @@ func main() {
 	RunPlugin(&OpenSDSPlugin{})
 }
 
-func generateDevicePath(link string) (string, error) {
+func getLvmDevicePath(volId string) (string, error) {
+	link := CINDER_LINK_PREFIX + strings.Replace(volId, "-", "--", 4)
+
 	path, err := os.Readlink(link)
 	if err != nil {
 		err = errors.New("Can't find device path!")
@@ -348,6 +335,28 @@ func generateDevicePath(link string) (string, error) {
 	slice := strings.Split(path, "/")
 	device := "/dev/" + slice[1]
 	return device, nil
+}
+
+func getCephDevicePath(volId string) (string, error) {
+	imagesCmd := exec.Command("rbd", "showmapped")
+	images, err := imagesCmd.CombinedOutput()
+	if err != nil {
+		return "", err
+	}
+
+	if strings.Contains(string(images), volId) {
+		err := errors.New("This volume have been attached!")
+		return "", err
+	}
+
+	pathCmd := exec.Command("rbd", "map", CEPH_LINK_PREFIX+volId)
+	device, err := pathCmd.CombinedOutput()
+	if err != nil {
+		return "", err
+	}
+
+	devSlice := strings.Split(string(device), "\n")
+	return devSlice[0], nil
 }
 
 func parseDevicePath(device string) (string, error) {

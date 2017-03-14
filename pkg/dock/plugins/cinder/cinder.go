@@ -238,8 +238,10 @@ func (plugin *CinderPlugin) getVolumeService() (volume.Service, error) {
 
 	// Make a new client with these creds, here configure InsecureSkipVerify
 	// in tls.Config to skip the certificate verification.
-	tls := &tls.Config{}
-	tls.InsecureSkipVerify = true
+	tls := &tls.Config{
+		InsecureSkipVerify: true,
+	}
+
 	sess, err := openstack.NewSession(nil, auth, tls)
 	if err != nil {
 		log.Fatalln("Error creating new Session:", err)
