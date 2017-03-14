@@ -90,7 +90,7 @@ func (vr VolumeRequest) detachVolume() *pb.Response {
 }
 
 func (vr VolumeRequest) mountVolume() *pb.Response {
-	return grpcapi.MountVolume(vr.MountDir, vr.Device, vr.FsType)
+	return grpcapi.MountVolume(vr.ResourceType, vr.MountDir, vr.Device, vr.FsType)
 }
 
 func (vr VolumeRequest) unmountVolume() *pb.Response {

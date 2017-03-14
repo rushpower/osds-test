@@ -139,13 +139,14 @@ func DetachVolume(resourceType, volID, attachment string) *pb.Response {
 	return resp
 }
 
-func MountVolume(mountDir, device, fsType string) *pb.Response {
+func MountVolume(resourceType, mountDir, device, fsType string) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
-		MountDir: mountDir,
-		Device:   device,
-		FsType:   fsType,
+		ResoureType: resourceType,
+		MountDir:    mountDir,
+		Device:      device,
+		FsType:      fsType,
 	}
 
 	resp, err := client.MountVolume(vr)
