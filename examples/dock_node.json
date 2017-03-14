@@ -3,5 +3,5 @@
 	"drivers": [
 		"cinder"
 	],
-	"address": "10.2.1.233:50050"
+	"address": "10.2.1.233"
 }
