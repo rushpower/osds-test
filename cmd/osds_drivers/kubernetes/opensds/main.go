@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/httplib"
-	"github.com/opensds/opensds/cmd/utils"
 )
 
 const (
@@ -95,7 +94,13 @@ func cinderAttach(opt *OpenSDSOptions) Result {
 
 	req := httplib.Post(url).SetTimeout(100*time.Second, 50*time.Second)
 
+	dockId, err := GetDockId()
+	if err != nil {
+		return Fail(err.Error())
+	}
+
 	var volumeRequest VolumeRequest
+	volumeRequest.DockId = dockId
 	volumeRequest.ActionType = "attach"
 	volumeRequest.Device = path
 
@@ -219,7 +224,13 @@ func (OpenSDSPlugin) Detach(device string) Result {
 
 	req = httplib.Post(url).SetTimeout(10*time.Second, 5*time.Second)
 
+	dockId, err := GetDockId()
+	if err != nil {
+		return Fail(err.Error())
+	}
+
 	var volumeRequest VolumeRequest
+	volumeRequest.DockId = dockId
 	volumeRequest.ActionType = "detach"
 	volumeRequest.Attachment = volumeResponse.Attachments[0]["attachment_id"]
 
@@ -256,7 +267,13 @@ func (OpenSDSPlugin) Mount(mountDir string, device string, opts interface{}) Res
 
 	req := httplib.Post(url).SetTimeout(100*time.Second, 50*time.Second)
 
+	dockId, err := GetDockId()
+	if err != nil {
+		return Fail(err.Error())
+	}
+
 	var volumeRequest VolumeRequest
+	volumeRequest.DockId = dockId
 	volumeRequest.ActionType = "mount"
 	volumeRequest.MountDir = mountDir
 	volumeRequest.Device = device
@@ -293,22 +310,15 @@ func (OpenSDSPlugin) Unmount(mountDir string) Result {
 
 	req := httplib.Post(url).SetTimeout(100*time.Second, 50*time.Second)
 
-	var volumeRequest VolumeRequest
-	volumeRequest.ActionType = "unmount"
-	volumeRequest.MountDir = mountDir
-
-	// Get OpenSDS host IP.
-	host, err := utils.GetHostIP()
+	dockId, err := GetDockId()
 	if err != nil {
 		return Fail(err.Error())
 	}
 
-	if host == "10.2.1.234" {
-		volumeRequest.ResourceType = "manila"
-	} else {
-		volumeRequest.ResourceType = "cinder"
-	}
-
+	var volumeRequest VolumeRequest
+	volumeRequest.DockId = dockId
+	volumeRequest.ActionType = "unmount"
+	volumeRequest.MountDir = mountDir
 	req.JSONBody(volumeRequest)
 	resp, err := req.Response()
 	if err != nil {

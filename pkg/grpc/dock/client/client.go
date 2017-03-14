@@ -47,7 +47,7 @@ const (
 )
 
 func CreateVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	address, err := getDialAddress(vr.GetResoureType())
+	address, err := getDialAddress(vr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -73,7 +73,7 @@ func CreateVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func GetVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	address, err := getDialAddress(vr.GetResoureType())
+	address, err := getDialAddress(vr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -99,7 +99,7 @@ func GetVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func ListVolumes(vr *pb.VolumeRequest) (*pb.Response, error) {
-	address, err := getDialAddress(vr.GetResoureType())
+	address, err := getDialAddress(vr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -125,7 +125,7 @@ func ListVolumes(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func DeleteVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	address, err := getDialAddress(vr.GetResoureType())
+	address, err := getDialAddress(vr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -151,7 +151,7 @@ func DeleteVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func AttachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	address, err := getDialAddress(vr.GetResoureType())
+	address, err := getDialAddress(vr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -177,7 +177,7 @@ func AttachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func DetachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	address, err := getDialAddress(vr.GetResoureType())
+	address, err := getDialAddress(vr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -203,7 +203,7 @@ func DetachVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func MountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	address, err := getDialAddress(vr.GetResoureType())
+	address, err := getDialAddress(vr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -229,7 +229,7 @@ func MountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func UnmountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
-	address, err := getDialAddress(vr.GetResoureType())
+	address, err := getDialAddress(vr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -255,7 +255,7 @@ func UnmountVolume(vr *pb.VolumeRequest) (*pb.Response, error) {
 }
 
 func CreateShare(sr *pb.ShareRequest) (*pb.Response, error) {
-	address, err := getDialAddress(sr.GetResoureType())
+	address, err := getDialAddress(sr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -281,7 +281,7 @@ func CreateShare(sr *pb.ShareRequest) (*pb.Response, error) {
 }
 
 func GetShare(sr *pb.ShareRequest) (*pb.Response, error) {
-	address, err := getDialAddress(sr.GetResoureType())
+	address, err := getDialAddress(sr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -307,7 +307,7 @@ func GetShare(sr *pb.ShareRequest) (*pb.Response, error) {
 }
 
 func ListShares(sr *pb.ShareRequest) (*pb.Response, error) {
-	address, err := getDialAddress(sr.GetResoureType())
+	address, err := getDialAddress(sr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -333,7 +333,7 @@ func ListShares(sr *pb.ShareRequest) (*pb.Response, error) {
 }
 
 func DeleteShare(sr *pb.ShareRequest) (*pb.Response, error) {
-	address, err := getDialAddress(sr.GetResoureType())
+	address, err := getDialAddress(sr.GetDockId())
 	if err != nil {
 		return &pb.Response{}, err
 	}
@@ -358,9 +358,9 @@ func DeleteShare(sr *pb.ShareRequest) (*pb.Response, error) {
 	return resp, nil
 }
 
-func getDialAddress(resourceType string) (string, error) {
+func getDialAddress(dockId string) (string, error) {
 	// Get Dock client host address.
-	address, err := metadata.GetDockAddress(resourceType)
+	address, err := metadata.GetDockAddress(dockId)
 	if err != nil {
 		return "", err
 	}

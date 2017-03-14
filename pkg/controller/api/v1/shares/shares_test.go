@@ -29,6 +29,7 @@ import (
 )
 
 type FakeShareRequest struct {
+	DockId       string `json:"dockId,omitempty"`
 	ResourceType string `json:"resourceType,omitempty"`
 	Id           string `json:"id,omitempty"`
 	Name         string `json:"name,omitempty"`

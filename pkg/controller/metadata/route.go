@@ -49,22 +49,25 @@ func getDockRoutes() ([]DockRoute, error) {
 	return routes, nil
 }
 
-func GetDockAddress(driver string) (string, error) {
+func GetDockAddress(dockId string) (string, error) {
 	routes, err := getDockRoutes()
 	if err != nil {
 		log.Println("Could not get dock routes:", err)
 		return "", err
 	}
 
+	if dockId == "" {
+		log.Println("Dock id not provided, arrange the address randomly!")
+		return routes[0].Address, nil
+	}
+
 	for _, i := range routes {
-		for _, j := range i.Drivers {
-			if j == driver {
-				return i.Address, nil
-			}
+		if dockId == i.Id {
+			return i.Address, nil
 		}
 	}
 
-	err = errors.New("Could not find this bankend storage driver!")
+	err = errors.New("Could not find this dock service!")
 	return "", err
 }
 

@@ -29,9 +29,11 @@ import (
 )
 
 type FakeVolumeRequest struct {
+	DockId       string `json:"dockId,omitempty"`
 	ResourceType string `json:"resourcetType,omitempty"`
 	Id           string `json:"id,omitempty"`
 	Name         string `json:"name,omitempty"`
+	VolumeType   string `json:"volumeType"`
 	Size         int    `json:"size"`
 	AllowDetails bool   `json:"allowDetails"`
 

@@ -101,6 +101,7 @@ message VolumeRequest {
   string attachment = 9;
   string mountDir = 10;
   string fsType = 11;
+  string dockId = 12;
 }
 
 // The ShareRequest message containing all properties of
@@ -113,6 +114,7 @@ message ShareRequest {
   string shareType = 5;
   string shareProto = 6;
   bool allowDetails = 7;
+  string dockId = 8;
 }
 
 // The Response message containing all properties of

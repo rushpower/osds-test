@@ -26,10 +26,11 @@ import (
 	pb "github.com/opensds/opensds/pkg/grpc/opensds"
 )
 
-func CreateVolume(resourceType, name, volumeType string, size int32) *pb.Response {
+func CreateVolume(dockId, resourceType, name, volumeType string, size int32) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		Name:        name,
 		VolumeType:  volumeType,
@@ -46,10 +47,11 @@ func CreateVolume(resourceType, name, volumeType string, size int32) *pb.Respons
 	return resp
 }
 
-func GetVolume(resourceType string, volID string) *pb.Response {
+func GetVolume(dockId, resourceType string, volID string) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		Id:          volID,
 	}
@@ -64,10 +66,11 @@ func GetVolume(resourceType string, volID string) *pb.Response {
 	return resp
 }
 
-func ListVolumes(resourceType string, allowDetails bool) *pb.Response {
+func ListVolumes(dockId, resourceType string, allowDetails bool) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
+		DockId:       dockId,
 		ResoureType:  resourceType,
 		AllowDetails: allowDetails,
 	}
@@ -82,10 +85,11 @@ func ListVolumes(resourceType string, allowDetails bool) *pb.Response {
 	return resp
 }
 
-func DeleteVolume(resourceType string, volID string) *pb.Response {
+func DeleteVolume(dockId, resourceType string, volID string) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		Id:          volID,
 	}
@@ -100,10 +104,11 @@ func DeleteVolume(resourceType string, volID string) *pb.Response {
 	return resp
 }
 
-func AttachVolume(resourceType, volID, host, device string) *pb.Response {
+func AttachVolume(dockId, resourceType, volID, host, device string) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		Id:          volID,
 		Host:        host,
@@ -120,10 +125,11 @@ func AttachVolume(resourceType, volID, host, device string) *pb.Response {
 	return resp
 }
 
-func DetachVolume(resourceType, volID, attachment string) *pb.Response {
+func DetachVolume(dockId, resourceType, volID, attachment string) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		Id:          volID,
 		Attachment:  attachment,
@@ -139,10 +145,11 @@ func DetachVolume(resourceType, volID, attachment string) *pb.Response {
 	return resp
 }
 
-func MountVolume(resourceType, mountDir, device, fsType string) *pb.Response {
+func MountVolume(dockId, resourceType, mountDir, device, fsType string) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		MountDir:    mountDir,
 		Device:      device,
@@ -159,10 +166,11 @@ func MountVolume(resourceType, mountDir, device, fsType string) *pb.Response {
 	return resp
 }
 
-func UnmountVolume(resourceType, mountDir string) *pb.Response {
+func UnmountVolume(dockId, resourceType, mountDir string) *pb.Response {
 	var falseResp *pb.Response
 
 	vr := &pb.VolumeRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		MountDir:    mountDir,
 	}
@@ -177,10 +185,11 @@ func UnmountVolume(resourceType, mountDir string) *pb.Response {
 	return resp
 }
 
-func CreateShare(resourceType, name, shrType, shrProto string, size int32) *pb.Response {
+func CreateShare(dockId, resourceType, name, shrType, shrProto string, size int32) *pb.Response {
 	var falseResp *pb.Response
 
 	sr := &pb.ShareRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		Name:        name,
 		ShareType:   shrType,
@@ -198,10 +207,11 @@ func CreateShare(resourceType, name, shrType, shrProto string, size int32) *pb.R
 	return resp
 }
 
-func GetShare(resourceType string, shrID string) *pb.Response {
+func GetShare(dockId, resourceType string, shrID string) *pb.Response {
 	var falseResp *pb.Response
 
 	sr := &pb.ShareRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		Id:          shrID,
 	}
@@ -216,10 +226,11 @@ func GetShare(resourceType string, shrID string) *pb.Response {
 	return resp
 }
 
-func ListShares(resourceType string, allowDetails bool) *pb.Response {
+func ListShares(dockId, resourceType string, allowDetails bool) *pb.Response {
 	var falseResp *pb.Response
 
 	sr := &pb.ShareRequest{
+		DockId:       dockId,
 		ResoureType:  resourceType,
 		AllowDetails: allowDetails,
 	}
@@ -234,10 +245,11 @@ func ListShares(resourceType string, allowDetails bool) *pb.Response {
 	return resp
 }
 
-func DeleteShare(resourceType string, shrID string) *pb.Response {
+func DeleteShare(dockId, resourceType string, shrID string) *pb.Response {
 	var falseResp *pb.Response
 
 	sr := &pb.ShareRequest{
+		DockId:      dockId,
 		ResoureType: resourceType,
 		Id:          shrID,
 	}

@@ -42,6 +42,7 @@ type ShareRequestDeliver interface {
 // ShareRequest is a structure for all properties of
 // a share request
 type ShareRequest struct {
+	DockId       string `json:"dockId,omitempty"`
 	ResourceType string `json:"resourceType,omitempty"`
 	Id           string `json:"id,omitempty"`
 	Name         string `json:"name,omitempty"`
@@ -52,19 +53,19 @@ type ShareRequest struct {
 }
 
 func (sr ShareRequest) createShare() *pb.Response {
-	return grpcapi.CreateShare(sr.ResourceType, sr.Name, sr.ShareType, sr.ShareProto, sr.Size)
+	return grpcapi.CreateShare(sr.DockId, sr.ResourceType, sr.Name, sr.ShareType, sr.ShareProto, sr.Size)
 }
 
 func (sr ShareRequest) getShare() *pb.Response {
-	return grpcapi.GetShare(sr.ResourceType, sr.Id)
+	return grpcapi.GetShare(sr.DockId, sr.ResourceType, sr.Id)
 }
 
 func (sr ShareRequest) listShares() *pb.Response {
-	return grpcapi.ListShares(sr.ResourceType, sr.AllowDetails)
+	return grpcapi.ListShares(sr.DockId, sr.ResourceType, sr.AllowDetails)
 }
 
 func (sr ShareRequest) deleteShare() *pb.Response {
-	return grpcapi.DeleteShare(sr.ResourceType, sr.Id)
+	return grpcapi.DeleteShare(sr.DockId, sr.ResourceType, sr.Id)
 }
 
 func CreateShare(srd ShareRequestDeliver) (api.ShareResponse, error) {

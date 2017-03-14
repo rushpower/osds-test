@@ -18,8 +18,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+
+	"github.com/opensds/opensds/cmd/utils"
 )
 
 type Result struct {
@@ -37,6 +41,7 @@ type DefaultOptions struct {
 // VolumeRequest is a structure for all properties of
 // a volume request
 type VolumeRequest struct {
+	DockId       string `json:"dockId,omitempty"`
 	ResourceType string `json:"resourceType,omitempty"`
 	Id           string `json:"id,omitempty"`
 	Name         string `json:"name,omitempty"`
@@ -225,4 +230,47 @@ func CheckHTTPResponseStatusCode(resp *http.Response) error {
 		return errors.New("Error: response == 503 service unavailable")
 	}
 	return errors.New("Error: unexpected response status code")
+}
+
+type DockNode struct {
+	Id      string   `json:"id"`
+	Drivers []string `json:"drivers"`
+	Address string   `json:"address"`
+}
+
+func getDockNode() (*DockNode, error) {
+	var nodePtr *DockNode
+
+	userJSON, err := ioutil.ReadFile("/etc/opensds/dock_node.json")
+	if err != nil {
+		log.Println("ReadFile json failed:", err)
+		return nodePtr, err
+	}
+
+	if err = json.Unmarshal(userJSON, nodePtr); err != nil {
+		log.Println("Unmarshal json failed:", err)
+		return nodePtr, err
+	}
+	return nodePtr, nil
+}
+
+func GetDockId() (string, error) {
+	dock, err := getDockNode()
+	if err != nil {
+		log.Println("Could not get dock routes:", err)
+		return "", err
+	}
+
+	host, err := utils.GetHostIP()
+	if err != nil {
+		log.Println("Could not get dock host ip:", err)
+		return "", err
+	}
+
+	if dock.Address == host {
+		return dock.Id, nil
+	} else {
+		err = errors.New("Could not find dock service!")
+		return "", err
+	}
 }

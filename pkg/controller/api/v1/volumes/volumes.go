@@ -50,6 +50,7 @@ type VolumeRequestDeliver interface {
 // VolumeRequest is a structure for all properties of
 // a volume request
 type VolumeRequest struct {
+	DockId       string `json:"dockId,omitempty"`
 	ResourceType string `json:"resourcetType,omitempty"`
 	Id           string `json:"id,omitempty"`
 	Name         string `json:"name,omitempty"`
@@ -66,35 +67,35 @@ type VolumeRequest struct {
 }
 
 func (vr VolumeRequest) createVolume() *pb.Response {
-	return grpcapi.CreateVolume(vr.ResourceType, vr.Name, vr.VolumeType, vr.Size)
+	return grpcapi.CreateVolume(vr.DockId, vr.ResourceType, vr.Name, vr.VolumeType, vr.Size)
 }
 
 func (vr VolumeRequest) getVolume() *pb.Response {
-	return grpcapi.GetVolume(vr.ResourceType, vr.Id)
+	return grpcapi.GetVolume(vr.DockId, vr.ResourceType, vr.Id)
 }
 
 func (vr VolumeRequest) listVolumes() *pb.Response {
-	return grpcapi.ListVolumes(vr.ResourceType, vr.AllowDetails)
+	return grpcapi.ListVolumes(vr.DockId, vr.ResourceType, vr.AllowDetails)
 }
 
 func (vr VolumeRequest) deleteVolume() *pb.Response {
-	return grpcapi.DeleteVolume(vr.ResourceType, vr.Id)
+	return grpcapi.DeleteVolume(vr.DockId, vr.ResourceType, vr.Id)
 }
 
 func (vr VolumeRequest) attachVolume() *pb.Response {
-	return grpcapi.AttachVolume(vr.ResourceType, vr.Id, vr.Host, vr.Device)
+	return grpcapi.AttachVolume(vr.DockId, vr.ResourceType, vr.Id, vr.Host, vr.Device)
 }
 
 func (vr VolumeRequest) detachVolume() *pb.Response {
-	return grpcapi.DetachVolume(vr.ResourceType, vr.Id, vr.Attachment)
+	return grpcapi.DetachVolume(vr.DockId, vr.ResourceType, vr.Id, vr.Attachment)
 }
 
 func (vr VolumeRequest) mountVolume() *pb.Response {
-	return grpcapi.MountVolume(vr.ResourceType, vr.MountDir, vr.Device, vr.FsType)
+	return grpcapi.MountVolume(vr.DockId, vr.ResourceType, vr.MountDir, vr.Device, vr.FsType)
 }
 
 func (vr VolumeRequest) unmountVolume() *pb.Response {
-	return grpcapi.UnmountVolume(vr.ResourceType, vr.MountDir)
+	return grpcapi.UnmountVolume(vr.DockId, vr.ResourceType, vr.MountDir)
 }
 
 func CreateVolume(vrd VolumeRequestDeliver) (api.VolumeResponse, error) {
